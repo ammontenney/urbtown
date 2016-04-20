@@ -23,12 +23,48 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
     </head>
-    <body>
+    <body class="container-fluid">
         <div id="map" class="map">
         </div>
 
         <div class="welcome-view">
-
+            <div class="welcome-dialog well">
+                <div class="welcome-close label label-default">X</div>
+                <h1>UrbTown</h1>
+                <p>Our goal is to help you find the essential places around you
+                whenever you need to go somewhere new.</p>
+                <div class="container-fluid welcome-controls">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <h6>What are you looking for?</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" autofocus class="welcome-query" data-bind="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <h6>Where do you want to look?</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <input type="text" autofocus class="welcome-address" data-bind="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <h6>How far do you want to look?</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <select class="welcome-radius">
+                                <option>5 miles</option>
+                                <option>10 miles</option>
+                                <option>15 miles</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input class="welcome-go-btn" type="button" value="Go!" data-bind="">
+                </div>
+            </div>
         </div>
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_GAc3VBDTxFcWO2yt9kWiIF8om6bxc6E&libraries=places"></script>

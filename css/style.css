@@ -15,3 +15,36 @@ html {
     height: 100%;
     z-index: 1;
 }
+
+.welcome-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.welcome-dialog {
+    z-index: inherit;
+    width: 75%;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.welcome-close, .welcome-go-btn {
+    float: right;
+}
+
+.welcome-controls .row .col-xs-12 h6,
+.welcome-controls .row .col-xs-12 input,
+.welcome-controls .row .col-xs-12 select  {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
