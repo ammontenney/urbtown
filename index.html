@@ -36,7 +36,7 @@
                 <div class="container-fluid welcome-controls">
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <h6>What are you looking for?</h6>
+                            <h6>* What are you looking for?</h6>
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" autofocus class="welcome-query" data-bind="">
@@ -44,7 +44,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <h6>Where do you want to look?</h6>
+                            <h6>* Where do you want to look?</h6>
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <input type="text" autofocus class="welcome-address" data-bind="">
@@ -52,7 +52,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <h6>How far do you want to look?</h6>
+                            <h6>* How far do you want to look?</h6>
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <select class="welcome-radius">
@@ -60,6 +60,11 @@
                                 <option>10 miles</option>
                                 <option>15 miles</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="welcome-error col-xs-12 alert alert-danger" role="alert">
+                            * indicates a required field
                         </div>
                     </div>
                     <input class="welcome-go-btn" type="button" value="Go!" data-bind="">

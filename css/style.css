@@ -36,6 +36,7 @@ html {
     transform: translate(-50%, -50%);
 }
 
+
 .welcome-close, .welcome-go-btn {
     float: right;
 }
@@ -47,4 +48,12 @@ html {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+}
+
+.welcome-error {
+    display: none;
+}
+
+.welcome-close {
+    visibility: hidden;
 }
