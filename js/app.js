@@ -9,8 +9,15 @@ var RADIUS_PRESETS = [5,10,15,20,25];
 function AppViewModel() {
     var t = this;
     var map;
+    var geocoder;
+    var places;
 
+    var coords = DEFUALT_MAP_CENTER;
+    var results;
+
+    var $welcomeView = $('.welcome-view');
     var $welcomeError = $('.welcome-error');
+    var $loadingNotification = $('.welcome-loading');
 
     t.RADIUS_PRESETS = ko.observableArray(RADIUS_PRESETS);
 
@@ -25,9 +32,10 @@ function AppViewModel() {
     */
     function welcomeSubmit() {
         if ( !verifyWelcomeInput() ) return;
-        console.log('load notification, lookup coords');
-        // TODO: display/hide loading notification
-        // TODO: lookup address coords
+
+        $loadingNotification.css('visibility', 'visible');
+
+        lookupAddressCoords();
     }
 
     /**
@@ -43,7 +51,63 @@ function AppViewModel() {
         }
 
         $welcomeError.css('display', 'none');
+
         return true;
+    }
+
+    /**
+    * @description Uses GMaps geocode to lookup the coords of an address
+    */
+    function lookupAddressCoords() {
+        geocoder.geocode({'address':t.address()}, geoCallback);
+        function geoCallback(geoResults, status) {
+            if (status !== google.maps.GeocoderStatus.OK){
+                $welcomeError.text('Try again. Address lookup failed: ' + status);
+                $welcomeError.css('display', 'block');
+                $loadingNotification.css('visibility', 'hidden');
+                return;
+            }
+
+            t.address(geoResults[0].formatted_address);
+            coords.lat = geoResults[0].geometry.location.lat();
+            coords.lng = geoResults[0].geometry.location.lng();
+
+            map.setCenter(coords);
+
+            loadQueryResults();
+        }
+    }
+
+    /**
+    * @description Uses GMaps nearbySearch to get query results and displays markers
+    */
+    function loadQueryResults() {
+        var request = {
+            location: coords,
+            radius: t.radius()*1600, // converts miles to km
+            keyword: t.query()
+        };
+
+        places.nearbySearch(request, searchCallback);
+        function searchCallback(placesResults, status) {
+            if (status !== google.maps.places.PlacesServiceStatus.OK){
+                $welcomeError.text('Try expanding your search radius. Search failed: ' + status);
+                $welcomeError.css('display', 'block');
+                $loadingNotification.css('visibility', 'hidden');
+                return;
+            }
+
+            results = placesResults;
+
+            // TODO: modify map view: logo, map type, results view, search button
+            // TODO: populate results view
+            // TODO: populate map markers
+
+            $loadingNotification.css('visibility', 'hidden');
+            $welcomeView.css('visibility', 'hidden');
+        }
+
+
     }
 
     /**
@@ -55,13 +119,12 @@ function AppViewModel() {
                 center: DEFUALT_MAP_CENTER,
                 zoom: 13
         });
+        geocoder = new google.maps.Geocoder();
+        places = new google.maps.places.PlacesService(map);
     }
 
     initializeGMaps();
 }
-
-
-
 
 
 
