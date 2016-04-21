@@ -117,7 +117,14 @@ function AppViewModel() {
     function initializeGMaps() {
         map = new google.maps.Map(document.getElementById('map'), {
                 center: DEFUALT_MAP_CENTER,
-                zoom: 13
+                zoom: 13,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                    position: google.maps.ControlPosition.TOP_RIGHT
+                 },
+                streetViewControl: false,
+                scaleControl: true
         });
         geocoder = new google.maps.Geocoder();
         places = new google.maps.places.PlacesService(map);
