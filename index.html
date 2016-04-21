@@ -34,44 +34,51 @@
                 <p>Our goal is to help you find the essential places around you
                 whenever you need to go somewhere new.</p>
                 <div class="container-fluid welcome-controls">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <h6>* What are you looking for?</h6>
+                    <form>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <h6>* What are you looking for?</h6>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <input type="text" autofocus class="welcome-query" data-bind="value: query">
+                            </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <input type="text" autofocus class="welcome-query" data-bind="">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <h6>* Where do you want to look?</h6>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <input type="text" autofocus class="welcome-address" data-bind="value: address">
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <h6>* Where do you want to look?</h6>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <h6>* How far do you want to look?</h6>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <select class="welcome-radius" data-bind="value: radius, foreach: RADIUS_PRESETS">
+                                    <option data-bind="value: $data, text: $data + ' miles'"></option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <input type="text" autofocus class="welcome-address" data-bind="">
+                        <div class="row">
+                            <div class="welcome-error col-xs-12 alert alert-danger" role="alert">
+                                * indicates a required field
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <h6>* How far do you want to look?</h6>
-                        </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <select class="welcome-radius">
-                                <option>5 miles</option>
-                                <option>10 miles</option>
-                                <option>15 miles</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="welcome-error col-xs-12 alert alert-danger" role="alert">
-                            * indicates a required field
-                        </div>
-                    </div>
-                    <input class="welcome-go-btn" type="button" value="Go!" data-bind="">
+                        <input class="welcome-go-btn" type="submit" value="Go!" data-bind="click: welcomeSubmit">
+                    </form>
+                </div>
+                <div class="welcome-loading well">
+                    <h1>
+                        <span class="label label-primary">Loading ...</span>
+                    </h1>
                 </div>
             </div>
         </div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_GAc3VBDTxFcWO2yt9kWiIF8om6bxc6E&libraries=places"></script>
         <script src="js/app.js"></script>
     </body>
