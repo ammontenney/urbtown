@@ -36,7 +36,7 @@
             </div>
 
             <div class="search">
-                <img src="img/search.svg" alt="Search Icon">
+                <img src="img/search.svg" alt="Search Icon" data-bind="click: openWelcome">
             </div>
         </div>
 
@@ -52,7 +52,7 @@
             </div>
             <div class="results-list">
                 <ul class="list-group" data-bind="foreach: results">
-                    <li class="list-group-item">
+                    <li class="list-group-item" data-bind="click: $parent.assignEntryClick($element, $data), event: {mouseover: $parent.entryMouseOver}">
                         <span><strong data-bind="text: name"></strong></span>
                         <br>
                         <span data-bind="text: vicinity"></span>
@@ -63,7 +63,7 @@
 
         <div class="welcome-view">
             <div class="welcome-dialog well">
-                <button type="button" class="welcome-close close"><span>×</span></button>
+                <button type="button" class="welcome-close close" data-bind="click: closeWelcome"><span>×</span></button>
                 <!-- <div class="welcome-close label label-default">X</div> -->
                 <img src="img/urbtown.svg" alt="UrbTown Logo">
                 <p>Our goal is to help you find the essential places around you
@@ -104,11 +104,21 @@
                         <input class="welcome-go-btn" type="submit" value="Go!" data-bind="click: welcomeSubmit">
                     </form>
                 </div>
+
                 <div class="welcome-loading well">
                     <h1>
                         <span class="label label-primary">Loading ...</span>
                     </h1>
                 </div>
+            </div>
+        </div>
+
+        <div class="entry-view">
+            <div class="entry-dialog well">
+                <button type="button" class="entry-close close" data-bind="click: closeEntry"><span>×</span></button>
+                <h1>
+                    Your entry with lots of info will be displayed here.
+                </h1>
             </div>
         </div>
 

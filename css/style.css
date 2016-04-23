@@ -16,6 +16,7 @@ html {
     z-index: 1;
 }
 
+/*============================================================================*/
 .header {
     position: absolute;
     top: 0;
@@ -28,14 +29,8 @@ html {
     background-color: gray;
 }
 
-
 .logo {
     width: 110px;
-    height: 50px;
-}
-
-.search {
-    width: 50px;
     height: 50px;
 }
 
@@ -48,6 +43,13 @@ html {
     justify-content: center;
 }
 
+.search {
+    width: 50px;
+    height: 50px;
+}
+/*----------------------------------------------------------------------------*/
+
+/*============================================================================*/
 .results {
     position: absolute;
     top: 50px;
@@ -62,7 +64,6 @@ html {
 
 .results-open {
     transform: translate(0, 0);
-
 }
 
 .arrow {
@@ -82,46 +83,47 @@ html {
     overflow: hidden;
 }
 
-.filter-entry {
-    width: 200px;
-    height: 35px;
-}
+        .filter-entry {
+            width: 200px;
+            height: 35px;
+        }
 
-.filter-btn {
-    width: 50px;
-    height: 35px;
-}
+        .filter-btn {
+            width: 50px;
+            height: 35px;
+        }
 
-.filter-label {
-    width: 100%;
-    height: 40px;
-}
+        /*.filter-label {
+            width: 100%;
+            height: 40px;
+        }*/
 
-.filter-clear {
-    width: 35px;
-    height: 35px;
-}
+        .filter-clear {
+            width: 35px;
+            height: 35px;
+        }
 
-.filter-crumb {
-    width: 215px;
-    height: 35px;
-    line-height: 35px;
-    vertical-align: middle;
-    overflow: hidden;
-}
+        .filter-crumb {
+            width: 215px;
+            height: 35px;
+            line-height: 35px;
+            vertical-align: middle;
+            overflow: hidden;
+        }
 
-.filter-crumb-text {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 17px;
-}
+        .filter-crumb-text {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 17px;
+        }
 
 .results-list {
     height: calc(100% - 70px);
     overflow-y: scroll;
 }
+/*----------------------------------------------------------------------------*/
 
-
+/*============================================================================*/
 .welcome-view {
     position: absolute;
     top: 0;
@@ -142,8 +144,13 @@ html {
     transform: translate(-50%, -50%);
 }
 
-.welcome-close, .welcome-go-btn {
-    float: right;
+.welcome-close {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    top: 1px;
+    right: 11px;
+    display: none;
 }
 
 .welcome-controls .row .col-xs-12 h6,
@@ -155,15 +162,16 @@ html {
     text-align: center;
 }
 
+        .welcome-query {}
+        .welcome-address {}
+        .welcome-radius {}
+
 .welcome-error {
     display: none;
 }
 
-.welcome-close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    visibility: hidden;
+.welcome-go-btn {
+    float: right;
 }
 
 .welcome-loading {
@@ -182,3 +190,35 @@ html {
     left: 50%;
     transform: translate(-50%, -100%);
 }
+/*----------------------------------------------------------------------------*/
+
+/*============================================================================*/
+.entry-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    background-color: rgba(0, 0, 0, 0.25);
+    visibility: hidden;
+}
+
+.entry-dialog {
+    z-index: inherit;
+    width: 90%;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.entry-close {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    top: 5px;
+    right: 5px;
+}
+/*----------------------------------------------------------------------------*/

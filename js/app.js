@@ -1,6 +1,6 @@
 var DEFUALT_MAP_CENTER = {lat: 37.2739675, lng: -104.678212}; // center of the USA
 var RADIUS_PRESETS = [5,10,15,20,25];
-var SELECTED_MARKER_COLOR = 'green';
+var SELECTED_MARKER_COLOR = 'lightblue';
 var MARKER_COLOR = 'red';
 
 /**
@@ -18,12 +18,15 @@ function AppViewModel() {
     // var results;
 
     var resultsToggleState = false;
+    var selectedEntry;
 
     var $welcomeView = $('.welcome-view');
     var $welcomeError = $('.welcome-error');
     var $loadingNotification = $('.welcome-loading');
     var $results = $('.results');
     var $arrow = $('.arrow');
+    var $entryView = $('.entry-view');
+    var $welcomeClose = $('.welcome-close');
 
     t.RADIUS_PRESETS = ko.observableArray(RADIUS_PRESETS);
 
@@ -34,7 +37,15 @@ function AppViewModel() {
 
     t.welcomeSubmit = welcomeSubmit;
     t.arrowClick = arrowClick;
+    t.assignEntryClick = assignEntryClick;
+    t.entryMouseOver = entryMouseOver;
+    t.openEntry = openEntry;
+    t.closeEntry = closeEntry;
+    t.openWelcome = openWelcome;
+    t.closeWelcome = closeWelcome;
 
+
+// =============================================================================
     /**
     * @description Called when the user clicks the Go button on the welcome-view
     */
@@ -48,8 +59,8 @@ function AppViewModel() {
 
     /**
     * @description Make sure the user entered valid input from .welcome-view;
-    * @return true - user input is valid; welcomeError is hidden
-    * @return false - user input is not valid; welcomeError is displayed
+    * @return {boolean} true - user input is valid and welcomeError is hidden;
+    * false - user input is not valid; welcomeError is displayed
     */
     function verifyWelcomeInput() {
         if ( !t.query() || !t.address() || !t.radius() ) {
@@ -114,8 +125,6 @@ function AppViewModel() {
             $loadingNotification.css('visibility', 'hidden');
             $welcomeView.css('visibility', 'hidden');
         }
-
-
     }
 
     /**
@@ -135,7 +144,7 @@ function AppViewModel() {
                 title: entry.name,
                 icon: icon
             });
-            // google.maps.event.addListener(entry.marker, 'click', markerClick(item));
+            google.maps.event.addListener(entry.marker, 'click', markerClick(entry));
         }
     }
 
@@ -156,7 +165,9 @@ function AppViewModel() {
         };
         return icon;
     }
+// -----------------------------------------------------------------------------
 
+// =============================================================================
     /**
     * @description This is called when the user clicks the expand/hide arrow
     * next to the results pane on the left of the screen
@@ -183,9 +194,99 @@ function AppViewModel() {
         $results.toggleClass('results-open', resultsToggleState);
         $arrow.toggleClass('flip-arrow', resultsToggleState);
     }
+// -----------------------------------------------------------------------------
 
-    function resetMap() {
+// =============================================================================
+    /**
+    * @description Used to assign a function to the KnockOut data-binding that
+    * handles the click event when a results entry is clicked. This method also
+    * stores the element associated with the binding for later use in selecting /
+    * deselecting entries
+    * @param {object} elem - the element associated with the KnockOut data-binding
+    * that calls this function
+    * @param {object} entry - a single result as returned from GMaps nearbySearch
+    * that is also associated with the KnockOut data-binding that calls this function
+    */
+    function assignEntryClick(elem, entry) {
+        entry.element = elem; // store the associated element on its own entry
+        return entryClick;
+    }
 
+    /**
+    * @description When a results entry is clicked, this will either select the
+    * entry or open the entry, if it has been selected. This will allow a mobile
+    * device that has no MouseOver event to be able to highlight an entry and its
+    * associated map marker
+    * @param {object} entry - a single result as returned from GMaps nearbySearch
+    */
+    function entryClick(entry) {
+        if (selectedEntry && selectedEntry.place_id === entry.place_id){
+            openEntry(entry);
+            console.log('openEntry()');
+        }
+        else {
+            selectEntry(entry);
+        }
+    }
+
+    /**
+    * @description Selects / highlights the results entry as the mouse moves over it
+    * @param {object} entry - a single result as returned from GMaps nearbySearch
+    */
+    function entryMouseOver(entry) {
+        selectEntry(entry);
+    }
+
+    /**
+    * @description When a map marker is clicked, this will select the associated
+    * entry and open it for viewing
+    * @param {object} entry - a single result as returned from GMaps nearbySearch
+    */
+    function markerClick(entry) {
+        return function (){
+            selectEntry(entry);
+            openEntry(entry);
+            console.log('openEntry()');
+        };
+    }
+
+    /**
+    * @description Select the provided entry by adding the 'active' class to the
+    * results list entry and by highlighting the map marker
+    * @param {object} entry - a single result as returned from GMaps nearbySearch
+    */
+    function selectEntry(entry){
+        if (selectedEntry){
+            var icon = createMarkerIcon(MARKER_COLOR);
+            selectedEntry.marker.setIcon(icon);
+            selectedEntry.marker.setZIndex(google.maps.Marker.MAX_ZINDEX-1);
+            $(selectedEntry.element).toggleClass('active', false);
+        }
+
+        selectedEntry = entry;
+        var selectedIcon = createMarkerIcon(SELECTED_MARKER_COLOR);
+        selectedEntry.marker.setIcon(selectedIcon);
+        selectedEntry.marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
+        $(selectedEntry.element).toggleClass('active', true);
+    }
+
+// -----------------------------------------------------------------------------
+
+    function openEntry(entry) {
+        $entryView.css('visibility', 'visible');
+    }
+
+    function closeEntry() {
+        $entryView.css('visibility', 'hidden');
+    }
+
+    function openWelcome() {
+        $welcomeClose.css('display', 'block');
+        $welcomeView.css('visibility', 'visible');
+    }
+
+    function closeWelcome(){
+        $welcomeView.css('visibility', 'hidden');
     }
 
     /**
