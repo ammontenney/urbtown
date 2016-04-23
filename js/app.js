@@ -15,9 +15,13 @@ function AppViewModel() {
     var coords = DEFUALT_MAP_CENTER;
     var results;
 
+    var resultsToggleState = false;
+
     var $welcomeView = $('.welcome-view');
     var $welcomeError = $('.welcome-error');
     var $loadingNotification = $('.welcome-loading');
+    var $results = $('.results');
+    var $arrow = $('.arrow');
 
     t.RADIUS_PRESETS = ko.observableArray(RADIUS_PRESETS);
 
@@ -26,6 +30,7 @@ function AppViewModel() {
     t.radius = ko.observable();
 
     t.welcomeSubmit = welcomeSubmit;
+    t.arrowClick = arrowClick;
 
     /**
     * @description Called when the user clicks the Go button on the welcome-view
@@ -111,6 +116,33 @@ function AppViewModel() {
     }
 
     /**
+    * @description This is called when the user clicks the expand/hide arrow
+    * next to the results pane on the left of the screen
+    */
+    function arrowClick() {
+        toggleResults();
+    }
+
+    /**
+    * @description Use to toggle the off-canvas results pane when the user clicks
+    * the arrow to expand / hide the search results. This function depends on the
+    * global variable 'resultsToggleState'
+    * @param display: pass t/f to specify to open/close results pane;
+    * if parameter is ommited the  results pane will toggle open/close
+    */
+    function toggleResults(display){
+        if (display !== undefined) {
+            resultsToggleState = display;
+        }
+        else {
+            resultsToggleState = !resultsToggleState;
+        }
+
+        $results.toggleClass('results-open', resultsToggleState);
+        $arrow.toggleClass('flip-arrow', resultsToggleState);
+    }
+
+    /**
     * @description Initializes Googles Maps related services for use in this app;
     * this is run when the script is loaded by the browser.
     */
@@ -122,7 +154,7 @@ function AppViewModel() {
                 mapTypeControlOptions: {
                     style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
                     position: google.maps.ControlPosition.TOP_RIGHT
-                 },
+                },
                 streetViewControl: false,
                 scaleControl: true
         });

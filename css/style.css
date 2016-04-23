@@ -9,11 +9,70 @@ html {
 
 .map {
     position: absolute;
-    top: 0;
+    top: 50px;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
     z-index: 1;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: gray;
+}
+
+
+.logo {
+    width: 110px;
+    height: 50px;
+}
+
+.search {
+    width: 50px;
+    height: 50px;
+}
+
+.address {
+    height: 50px;
+    width: calc(100% - 160px);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.results {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    z-index: 100;
+    width: 250px;
+    height: calc(100% - 50px);
+    background-color: lightgray;
+    transform: translate(-100%, 0);
+    transition: transform 0.3s ease;
+}
+
+.results-open {
+    transform: translate(0, 0);
+
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    left: 250px;
+}
+
+.flip-arrow {
+    transform: scale(-1, 1);
 }
 
 .welcome-view {
@@ -28,7 +87,7 @@ html {
 
 .welcome-dialog {
     z-index: inherit;
-    width: 75%;
+    width: 90%;
     max-width: 500px;
     position: absolute;
     top: 50%;
