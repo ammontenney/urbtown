@@ -41,16 +41,31 @@
         </div>
 
         <div class="results">
-            Search results
             <div class="arrow btn btn-xs btn-primary" data-bind="click: arrowClick">
                 &gt;&gt;
+            </div>
+            <div class="filter">
+                <input type="text" class="filter-entry">
+                <input type="button" class="filter-btn btn btn-primary" value="Filter">
+                <button type="button" class="filter-clear close"><span>×</span></button>
+                <div class="filter-crumb"><span class="filter-crumb-text">No filters applied.</span></div>
+            </div>
+            <div class="results-list">
+                <ul class="list-group" data-bind="foreach: results">
+                    <li class="list-group-item">
+                        <span><strong data-bind="text: name"></strong></span>
+                        <br>
+                        <span data-bind="text: vicinity"></span>
+                    </li>
+                </ul>
             </div>
         </div>
 
         <div class="welcome-view">
             <div class="welcome-dialog well">
-                <div class="welcome-close label label-default">X</div>
-                <h1><img src="img/urbtown.svg" alt="UrbTown Logo"></h1>
+                <button type="button" class="welcome-close close"><span>×</span></button>
+                <!-- <div class="welcome-close label label-default">X</div> -->
+                <img src="img/urbtown.svg" alt="UrbTown Logo">
                 <p>Our goal is to help you find the essential places around you
                 whenever you need to go somewhere new.</p>
                 <div class="container-fluid welcome-controls">

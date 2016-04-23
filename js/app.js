@@ -13,7 +13,7 @@ function AppViewModel() {
     var places;
 
     var coords = DEFUALT_MAP_CENTER;
-    var results;
+    // var results;
 
     var resultsToggleState = false;
 
@@ -28,6 +28,7 @@ function AppViewModel() {
     t.query = ko.observable();
     t.address = ko.observable();
     t.radius = ko.observable();
+    t.results = ko.observableArray();
 
     t.welcomeSubmit = welcomeSubmit;
     t.arrowClick = arrowClick;
@@ -102,10 +103,9 @@ function AppViewModel() {
                 return;
             }
 
-            results = placesResults;
+            t.results(placesResults);
+            console.log(placesResults);
 
-            // TODO: modify map view: logo, map type, results view, search button
-            // TODO: populate results view
             // TODO: populate map markers
 
             $loadingNotification.css('visibility', 'hidden');
@@ -140,6 +140,10 @@ function AppViewModel() {
 
         $results.toggleClass('results-open', resultsToggleState);
         $arrow.toggleClass('flip-arrow', resultsToggleState);
+    }
+
+    function resetMap() {
+
     }
 
     /**

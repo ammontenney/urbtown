@@ -55,7 +55,7 @@ html {
     z-index: 100;
     width: 250px;
     height: calc(100% - 50px);
-    background-color: lightgray;
+    background-color: white;
     transform: translate(-100%, 0);
     transition: transform 0.3s ease;
 }
@@ -74,6 +74,53 @@ html {
 .flip-arrow {
     transform: scale(-1, 1);
 }
+
+.filter {
+    display: flex;
+    flex-wrap: wrap;
+    height: 70px;
+    overflow: hidden;
+}
+
+.filter-entry {
+    width: 200px;
+    height: 35px;
+}
+
+.filter-btn {
+    width: 50px;
+    height: 35px;
+}
+
+.filter-label {
+    width: 100%;
+    height: 40px;
+}
+
+.filter-clear {
+    width: 35px;
+    height: 35px;
+}
+
+.filter-crumb {
+    width: 215px;
+    height: 35px;
+    line-height: 35px;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.filter-crumb-text {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 17px;
+}
+
+.results-list {
+    height: calc(100% - 70px);
+    overflow-y: scroll;
+}
+
 
 .welcome-view {
     position: absolute;
@@ -113,6 +160,9 @@ html {
 }
 
 .welcome-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
     visibility: hidden;
 }
 
