@@ -1,5 +1,7 @@
-var DEFUALT_MAP_CENTER = { lat: 37.2739675, lng: -104.678212}; // center of the USA
+var DEFUALT_MAP_CENTER = {lat: 37.2739675, lng: -104.678212}; // center of the USA
 var RADIUS_PRESETS = [5,10,15,20,25];
+var SELECTED_MARKER_COLOR = 'green';
+var MARKER_COLOR = 'red';
 
 /**
 * @description This is the ViewModel to use with KnockOut.js. This whole app
@@ -107,12 +109,52 @@ function AppViewModel() {
             console.log(placesResults);
 
             // TODO: populate map markers
+            addMapMarkers();
 
             $loadingNotification.css('visibility', 'hidden');
             $welcomeView.css('visibility', 'hidden');
         }
 
 
+    }
+
+    /**
+    * @description Adds a marker icon to each entry in t.results() and displays
+    * those markers on the map
+    */
+    function addMapMarkers() {
+        var len = t.results().length;
+        var entry = {};
+        var icon = createMarkerIcon(MARKER_COLOR);
+
+        for (var i=0; i<len; i++){
+            entry = t.results()[i];
+            entry.marker = new google.maps.Marker({
+                position: entry.geometry.location,
+                map: map,
+                title: entry.name,
+                icon: icon
+            });
+            // google.maps.event.addListener(entry.marker, 'click', markerClick(item));
+        }
+    }
+
+    /**
+    * @description Creates a customized icon to place on GMaps
+    * @param {string} color - any valid HTML color
+    * @returns {object} an icon object representing an svg icon
+    * https://developers.google.com/maps/documentation/javascript/examples/marker-symbol-custom
+    */
+    function createMarkerIcon(color){
+        var icon = {
+            path: 'M 0,0 24,0, 24,24 12,40, 0,24 z',
+            fillColor: color,
+            fillOpacity: 0.8,
+            scale: 0.75,
+            strokeColor: 'black',
+            strokeWeight: 1,
+        };
+        return icon;
     }
 
     /**
@@ -127,7 +169,7 @@ function AppViewModel() {
     * @description Use to toggle the off-canvas results pane when the user clicks
     * the arrow to expand / hide the search results. This function depends on the
     * global variable 'resultsToggleState'
-    * @param display: pass t/f to specify to open/close results pane;
+    * @param {boolean} display - pass t/f to specify to open/close results pane;
     * if parameter is ommited the  results pane will toggle open/close
     */
     function toggleResults(display){
@@ -153,7 +195,7 @@ function AppViewModel() {
     function initializeGMaps() {
         map = new google.maps.Map(document.getElementById('map'), {
                 center: DEFUALT_MAP_CENTER,
-                zoom: 13,
+                zoom: 11,
                 mapTypeControl: true,
                 mapTypeControlOptions: {
                     style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
