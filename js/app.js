@@ -2,6 +2,7 @@ var DEFUALT_MAP_CENTER = {lat: 37.2739675, lng: -104.678212}; // center of the U
 var RADIUS_PRESETS = [5,10,15,20,25];
 var SELECTED_MARKER_COLOR = 'lightblue';
 var MARKER_COLOR = 'red';
+var NO_FILTER_MSG = 'No filter applied.';
 
 /**
 * @description This is the ViewModel to use with KnockOut.js. This whole app
@@ -13,12 +14,15 @@ function AppViewModel() {
     var map;
     var geocoder;
     var places;
+    var originalResults;
 
     var coords = DEFUALT_MAP_CENTER;
     // var results;
 
     var resultsToggleState = false;
     var selectedEntry;
+
+
 
     var $welcomeView = $('.welcome-view');
     var $welcomeError = $('.welcome-error');
@@ -34,6 +38,8 @@ function AppViewModel() {
     t.address = ko.observable();
     t.radius = ko.observable();
     t.results = ko.observableArray();
+    t.filterQuery = ko.observable();
+    t.filterLabel = ko.observable(NO_FILTER_MSG);
 
     t.welcomeSubmit = welcomeSubmit;
     t.arrowClick = arrowClick;
@@ -43,6 +49,8 @@ function AppViewModel() {
     t.closeEntry = closeEntry;
     t.openWelcome = openWelcome;
     t.closeWelcome = closeWelcome;
+    t.filterClick = filterClick;
+    t.clearFilterClick = clearFilterClick;
 
 
 // =============================================================================
@@ -116,8 +124,8 @@ function AppViewModel() {
                 return;
             }
 
+            originalResults = placesResults;
             t.results(placesResults);
-            console.log(placesResults);
 
             // TODO: populate map markers
             addMapMarkers();
@@ -272,6 +280,8 @@ function AppViewModel() {
 
 // -----------------------------------------------------------------------------
 
+// =============================================================================
+
     function openEntry(entry) {
         $entryView.css('visibility', 'visible');
     }
@@ -288,6 +298,99 @@ function AppViewModel() {
     function closeWelcome(){
         $welcomeView.css('visibility', 'hidden');
     }
+
+// -----------------------------------------------------------------------------
+
+// =============================================================================
+
+    /**
+    * @description Called when user clicks the filter button in the results view;
+    * this will progressively filter the search results by whatever the user enters
+    */
+    function filterClick() {
+        // don't do anything if the user didn't enter anything to filter by
+        if (!t.filterQuery()) return;
+
+        // update the label showing the current filter
+        if (t.filterLabel() == NO_FILTER_MSG){
+            t.filterLabel(t.filterQuery());
+        }
+        else{
+            t.filterLabel(t.filterLabel()+ ' + ' +t.filterQuery());
+        }
+
+        // Save the filterQuery and then clear it from the display
+        var tmpQuery = t.filterQuery();
+        t.filterQuery('');
+
+        toggleMarkers(false);   // turn off all displayed markers
+
+        var filteredResults = t.results().filter(checkFilterQuery(tmpQuery));
+        t.results(filteredResults);
+
+        toggleMarkers(true); // turn on markers for the newly filtered results
+    }
+
+    /**
+    * @description Called when user clicks the 'X' next to the filter label;
+    * resets the search results to the original query results
+    */
+    function clearFilterClick() {
+        if (t.results() === originalResults) return;
+
+        toggleMarkers(false);
+
+        t.results(originalResults);
+
+        toggleMarkers(true);
+        t.filterLabel(NO_FILTER_MSG);
+    }
+
+    /**
+    * @description This is used in conjunction with results.filter() as called
+    * by filterClick and servers as a comparison function to know which array
+    * entries should be filtered
+    * @param {string} query - text by which the search results will be filtered
+    * @return {boolean} true - a query match was found; false - no match found
+    */
+    function checkFilterQuery(query){
+        return function(entry, index){
+            var key = query.toLowerCase();
+            var name = entry.name.toLowerCase();
+            var address = entry.vicinity.toLowerCase();
+
+            if (name.includes(key) || address.includes(key))
+                return true;
+            else
+                return false;
+        };
+    }
+
+    /**
+    * @description Use to display or hide the markers on the map; used
+    * by filterClick() to remove old search results from the map and display the
+    * new results
+    * @param {boolean} display - true to display markers; false to remove markers
+    */
+    function toggleMarkers(display){
+        var tmpMap = null;
+        if (display){
+            tmpMap = map;
+        }
+
+        var len = t.results().length;
+        var item = {};
+        for (var i=0; i<len; i++){
+            item = t.results()[i];
+            item.marker.setMap(tmpMap);
+        }
+    }
+
+// -----------------------------------------------------------------------------
+
+
+
+
 
     /**
     * @description Initializes Googles Maps related services for use in this app;

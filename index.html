@@ -45,10 +45,10 @@
                 &gt;&gt;
             </div>
             <div class="filter">
-                <input type="text" class="filter-entry">
-                <input type="button" class="filter-btn btn btn-primary" value="Filter">
-                <button type="button" class="filter-clear close"><span>×</span></button>
-                <div class="filter-crumb"><span class="filter-crumb-text">No filters applied.</span></div>
+                <input type="text" class="filter-entry" data-bind="value: filterQuery">
+                <input type="button" class="filter-btn btn btn-primary" value="Filter" data-bind="click: filterClick">
+                <button type="button" class="filter-clear close" data-bind="click: clearFilterClick"><span>×</span></button>
+                <div class="filter-crumb"><span class="filter-crumb-text" data-bind="text: filterLabel"></span></div>
             </div>
             <div class="results-list">
                 <ul class="list-group" data-bind="foreach: results">
