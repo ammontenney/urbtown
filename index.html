@@ -116,9 +116,19 @@
         <div class="entry-view">
             <div class="entry-dialog well">
                 <button type="button" class="entry-close close" data-bind="click: closeEntry"><span>×</span></button>
-                <h1>
-                    Your entry with lots of info will be displayed here.
-                </h1>
+                <div class="select-service-view">
+                    <button type="button" class="btn btn-primary" data-bind="click: serviceClick($element, gpLoader)">Google</button>
+                    <button type="button" class="btn btn-default" data-bind="click: serviceClick($element, ypLoader)">YellowPages</button>
+                </div>
+                <div class="gp-loader loader">
+                    <div class="loader-col red">
+                        column 1
+                    </div>
+                    <div class="loader-col blue">
+                        column 2
+                    </div>
+                </div>
+                <div class="gp-loader loader"></div>
             </div>
         </div>
 

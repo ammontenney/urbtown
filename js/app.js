@@ -31,6 +31,7 @@ function AppViewModel() {
     var $arrow = $('.arrow');
     var $entryView = $('.entry-view');
     var $welcomeClose = $('.welcome-close');
+    var $selectServiceView = $('.select-service-view');
 
     t.RADIUS_PRESETS = ko.observableArray(RADIUS_PRESETS);
 
@@ -51,6 +52,9 @@ function AppViewModel() {
     t.closeWelcome = closeWelcome;
     t.filterClick = filterClick;
     t.clearFilterClick = clearFilterClick;
+    t.serviceClick = serviceClick;
+    t.gpLoader = gpLoader;
+    t.ypLoader = ypLoader;
 
 
 // =============================================================================
@@ -387,6 +391,31 @@ function AppViewModel() {
     }
 
 // -----------------------------------------------------------------------------
+
+
+    function serviceClick(btnElem, loader) {
+        return function(){
+            selectActiveButton(btnElem);
+            loader();
+        };
+    }
+
+    function selectActiveButton(btnElem) {
+        $selectServiceView.children('button').toggleClass('btn-primary', false);
+        $selectServiceView.children('button').toggleClass('btn-default', true);
+        $(btnElem).toggleClass('btn-primary', true);
+        $(btnElem).toggleClass('btn-default', false);
+    }
+
+    function gpLoader() {
+        console.log('google');
+    }
+
+
+    function ypLoader() {
+        console.log('yellow pages');
+    }
+
 
 
 
