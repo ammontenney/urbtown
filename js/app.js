@@ -131,7 +131,6 @@ function AppViewModel() {
             originalResults = placesResults;
             t.results(placesResults);
 
-            // TODO: populate map markers
             addMapMarkers();
 
             $loadingNotification.css('visibility', 'hidden');
