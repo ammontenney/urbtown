@@ -227,27 +227,36 @@ html {
 
 /*============================================================================*/
 .loader {
+    position: relative;
+    width: 100%;
+}
 
+.loader-msg {
+    z-index: 300;
+    position:absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.loader-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .loader-logo {
     width: 100%;
+    max-height: 36px;
     padding: 5px;
 }
 
 .loader-logo img {
     display: block;
     margin: auto;
-}
-
-
-.yp-loader {
-    display: none;
-}
-.loader {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
 }
 
 .loader-col {

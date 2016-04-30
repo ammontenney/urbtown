@@ -3,6 +3,8 @@ var RADIUS_PRESETS = [5,10,15,20,25];
 var SELECTED_MARKER_COLOR = 'lightblue';
 var MARKER_COLOR = 'red';
 var NO_FILTER_MSG = 'No filter applied.';
+var GP_LOGO = 'img/g-logo.png';
+var YP_LOGO = 'img/yp-logo.svg';
 
 /**
 * @description This is the ViewModel to use with KnockOut.js. This whole app
@@ -21,6 +23,7 @@ function AppViewModel() {
 
     var resultsToggleState = false;
     var selectedEntry;
+    var selectedLoader = gpLoader;
 
 
 
@@ -41,6 +44,20 @@ function AppViewModel() {
     t.results = ko.observableArray();
     t.filterQuery = ko.observable();
     t.filterLabel = ko.observable(NO_FILTER_MSG);
+    t.showLoaderContent = ko.observable(false); // T/F
+    t.showLoaderMsg = ko.observable(false); // T/F
+    t.loaderMsgTitle = ko.observable();
+    t.loaderMsgDesc = ko.observable();
+    t.showEntryView = ko.observable(false); // T/F
+    t.loaderLogo = ko.observable();
+    t.loaderInfo = ko.observableArray();
+    t.loaderReviews = ko.observableArray();
+
+    t.styleShowLoaderContent = ko.pureComputed(styleShowLoaderContent);
+    t.styleShowLoaderMsg = ko.pureComputed(styleShowLoaderMsg);
+    t.styleShowEntryView = ko.pureComputed(styleShowEntryView);
+
+
 
     t.welcomeSubmit = welcomeSubmit;
     t.arrowClick = arrowClick;
@@ -52,12 +69,12 @@ function AppViewModel() {
     t.closeWelcome = closeWelcome;
     t.filterClick = filterClick;
     t.clearFilterClick = clearFilterClick;
-    t.serviceClick = serviceClick;
+    t.serviceBtnClick = serviceBtnClick;
     t.gpLoader = gpLoader;
     t.ypLoader = ypLoader;
 
 
-// =============================================================================
+    // =========================================================================
     /**
     * @description Called when the user clicks the Go button on the welcome-view
     */
@@ -176,9 +193,10 @@ function AppViewModel() {
         };
         return icon;
     }
-// -----------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
-// =============================================================================
+
+    // =========================================================================
     /**
     * @description This is called when the user clicks the expand/hide arrow
     * next to the results pane on the left of the screen
@@ -205,9 +223,10 @@ function AppViewModel() {
         $results.toggleClass('results-open', resultsToggleState);
         $arrow.toggleClass('flip-arrow', resultsToggleState);
     }
-// -----------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
-// =============================================================================
+
+    // =========================================================================
     /**
     * @description Used to assign a function to the KnockOut data-binding that
     * handles the click event when a results entry is clicked. This method also
@@ -233,7 +252,6 @@ function AppViewModel() {
     function entryClick(entry) {
         if (selectedEntry && selectedEntry.place_id === entry.place_id){
             openEntry(entry);
-            console.log('openEntry()');
         }
         else {
             selectEntry(entry);
@@ -257,7 +275,6 @@ function AppViewModel() {
         return function (){
             selectEntry(entry);
             openEntry(entry);
-            console.log('openEntry()');
         };
     }
 
@@ -280,32 +297,49 @@ function AppViewModel() {
         selectedEntry.marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
         $(selectedEntry.element).toggleClass('active', true);
     }
+    // -------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
 
-// =============================================================================
+    // =========================================================================
+    /**
+    * @description This is called by a results-list click or a map marker click
+    * and opens the entry-view to view 3rd party info for the selectedEntry
+    */
+    function openEntry() {
+        t.showEntryView(true);
+        selectedLoader();
+    }
 
-    function openEntry(entry) {
-        $entryView.css('visibility', 'visible');
+    /**
+    * @description sets the title and description on loader-msg
+    * @param {string} title
+    * @param {string} desc
+    */
+    function setLoaderMsg(title, desc) {
+        t.loaderMsgTitle(title);
+        t.loaderMsgDesc(desc);
     }
 
     function closeEntry() {
-        $entryView.css('visibility', 'hidden');
+        toggleLoaderMsg(false, false);
+        t.showEntryView(false);
     }
 
+
     function openWelcome() {
+        // TODO: replace w/ observables
         $welcomeClose.css('display', 'block');
         $welcomeView.css('visibility', 'visible');
     }
 
     function closeWelcome(){
+        // TODO: replace w/ observables
         $welcomeView.css('visibility', 'hidden');
     }
+    // -------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
 
-// =============================================================================
-
+    // =========================================================================
     /**
     * @description Called when user clicks the filter button in the results view;
     * this will progressively filter the search results by whatever the user enters
@@ -388,17 +422,63 @@ function AppViewModel() {
             item.marker.setMap(tmpMap);
         }
     }
+    // -------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+
+    // =========================================================================
+    function styleShowLoaderContent() {
+        if (t.showLoaderContent())
+            return 'visible';
+        else
+            return 'hidden';
+    }
+
+    function styleShowLoaderMsg() {
+        if (t.showLoaderMsg())
+            return 'visible';
+        else
+            return 'hidden';
+    }
+
+    function toggleLoaderMsg(msgOpen, contentOpen) {
+        t.showLoaderMsg(msgOpen);
+        if (contentOpen === undefined)
+            t.showLoaderContent(!msgOpen);
+        else
+            t.showLoaderContent(contentOpen);
+    }
 
 
-    function serviceClick(btnElem, loader) {
+    function styleShowEntryView() {
+        if (t.showEntryView())
+            return 'visible';
+        else
+            return 'hidden';
+    }
+    // -------------------------------------------------------------------------
+
+
+    /**
+    * @description Called when the user selects which 3rd party service they
+    * want to seen info for. Associates the appropriate element (for selecting/
+    * deselecting) and loading function to each button via KnockOut
+    * @param {obj} btnElem - the element representing the button that the user
+    * just clicked
+    * @param {function} loader - the function that will load 3rd party info from
+    * its related service and display it to the entry-view
+    */
+    function serviceBtnClick(btnElem, loader) {
         return function(){
             selectActiveButton(btnElem);
+            selectedLoader = loader;
             loader();
         };
     }
 
+    /**
+    * @description Highlights the provided button element and deselects all others
+    * @param {obj} btnElem - the buton to be highlighted
+    */
     function selectActiveButton(btnElem) {
         $selectServiceView.children('button').toggleClass('btn-primary', false);
         $selectServiceView.children('button').toggleClass('btn-default', true);
@@ -406,13 +486,98 @@ function AppViewModel() {
         $(btnElem).toggleClass('btn-default', false);
     }
 
+    /**
+    * @description
+    * @param {}
+    */
     function gpLoader() {
-        console.log('google');
+        setLoaderMsg('Loading ...', '');
+        t.loaderLogo(GP_LOGO);
+        toggleLoaderMsg(true);
+
+        var request = {placeId: selectedEntry.place_id};
+        places.getDetails(request, gpLoaderCallback);
+    }
+
+    function gpLoaderCallback(details, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK){
+            setLoaderMsg('Something didn\'t work. Try again.', 'Error: '+ status);
+            toggleLoaderMsg(true);
+            return;
+        }
+
+        var tmpInfo = [];
+        tmpInfo.push({title: 'Name:', desc: details.name || '-'});
+        tmpInfo.push({title: 'Rating:', desc: details.rating || '-'});
+        tmpInfo.push({title: 'Phone:', desc: details.formatted_phone_number || '-'});
+        if (details.website){
+            var website = '<a target="_blank" href="'+details.website+'">Click to open</a>';
+            tmpInfo.push({title: 'Website:', desc: website});
+        }
+        if (details.formatted_address) {
+            var address = '<a target="_blank" href="'+details.url+'">'+details.formatted_address+'</a>';
+            tmpInfo.push({title: 'Address:', desc: address});
+        }
+        t.loaderInfo(tmpInfo);
+
+        // var tmpReviews = [];
+        //
+        // if (!details.reviews){
+        //
+        //     tempReviews.push({
+        //         reviewer: 'No reviews',
+        //         stars: '',
+        //         date: ''
+        //     });
+        //
+        //     t.loaderReviews(tmpReviews);
+        //     return;
+        // }
+        //
+        // for (var i=0; i<details.reviews.length; i++){
+        //
+        // }
+        //
+        // t.loaderReviews(tmpReviews);
+
+        /*
+        details.name
+        details.rating
+        details.formatted_phone_number
+        details.website
+        details.url  // GMaps address
+        details.formatted_address
+
+        details.reviews.author_name
+        details.reviews.rating
+        details.reviews.text
+        details.reviews.date?
+        */
+
+
+        toggleLoaderMsg(false);
     }
 
 
+
+
+    /**
+    * @description
+    * @param {}
+    */
     function ypLoader() {
-        console.log('yellow pages');
+        setLoaderMsg('Loading ...', '');
+        t.loaderLogo(YP_LOGO);
+        toggleLoaderMsg(true);
+
+        setTimeout(function(){
+            ypLoaderCallback();
+        }, 500);
+    }
+
+    function ypLoaderCallback() {
+
+        toggleLoaderMsg(false);
     }
 
 
@@ -443,7 +608,6 @@ function AppViewModel() {
     initializeGMaps();
 }
 
-
-
-var myViewModel = new AppViewModel();
+// TODO: change global to var
+myViewModel = new AppViewModel();
 ko.applyBindings(myViewModel);
