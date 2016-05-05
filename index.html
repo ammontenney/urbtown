@@ -129,13 +129,23 @@
                         <div class="loader-logo">
                             <img class="img-responsive" data-bind="attr: {src: loaderLogo}">
                         </div>
-                        <div class="loader-col red" data-bind="foreach: loaderInfo">
-                                <div class="col-sm-4"><strong data-bind="text: title"></strong></div>
-                                <div class="col-sm-8" data-bind="html: desc"></div>
+                        <div class="loader-info" data-bind="foreach: loaderInfo">
+                                <div class="loader-row">
+                                    <div class="col-sm-4"><strong data-bind="text: title"></strong></div>
+                                    <div class="col-sm-8" data-bind="html: desc"></div>
+                                </div>
                         </div>
-                        <div class="loader-col blue gp-reviews">
-                            <div><strong>Reviewer - # Stars</strong></div>
-                            <div>Bla bla bla bla bla</div>
+                        <div class="loader-reviews" data-bind="foreach: loaderReviews">
+                            <div class="review">
+                                <div><strong>
+                                    <span data-bind="text: author_name"></span>
+                                    <span data-bind="text: ' - ' + rating"></span>
+                                </strong></div>
+                                <p data-bind="text: text"></p>
+                            </div>
+                        </div>
+                        <div class="loader-col gp-reviews" data-bind="if: !loaderReviews">
+                            No reviews for this location.
                         </div>
                     </div>
                 </div>

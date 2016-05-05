@@ -25,8 +25,7 @@ function AppViewModel() {
     var selectedEntry;
     var selectedLoader = gpLoader;
 
-
-
+    // Some jQuery handles for commonly used elements
     var $welcomeView = $('.welcome-view');
     var $welcomeError = $('.welcome-error');
     var $loadingNotification = $('.welcome-loading');
@@ -38,6 +37,7 @@ function AppViewModel() {
 
     t.RADIUS_PRESETS = ko.observableArray(RADIUS_PRESETS);
 
+    // KnockOut observables used in index.html
     t.query = ko.observable();
     t.address = ko.observable();
     t.radius = ko.observable();
@@ -311,7 +311,7 @@ function AppViewModel() {
     }
 
     /**
-    * @description sets the title and description on loader-msg
+    * @description Sets the title and description on the loader-msg view
     * @param {string} title
     * @param {string} desc
     */
@@ -320,18 +320,28 @@ function AppViewModel() {
         t.loaderMsgDesc(desc);
     }
 
+    /**
+    * @description Hide the entry-view from the display
+    */
     function closeEntry() {
         toggleLoaderMsg(false, false);
         t.showEntryView(false);
     }
 
-
+    /**
+    * @description Called when the user clicks the magnifying glass icon to
+    * change the map location
+    */
     function openWelcome() {
         // TODO: replace w/ observables
         $welcomeClose.css('display', 'block');
         $welcomeView.css('visibility', 'visible');
     }
 
+    /**
+    * @description Called when when the user clicks the X icon in the corner of
+    * the welcome view
+    */
     function closeWelcome(){
         // TODO: replace w/ observables
         $welcomeView.css('visibility', 'hidden');
@@ -487,10 +497,13 @@ function AppViewModel() {
     }
 
     /**
-    * @description
-    * @param {}
+    * @description loads review info from Google Places Reviews
     */
     function gpLoader() {
+        // clear any old results from the views
+        t.loaderInfo([]);
+        t.loaderReviews([]);
+
         setLoaderMsg('Loading ...', '');
         t.loaderLogo(GP_LOGO);
         toggleLoaderMsg(true);
@@ -499,6 +512,13 @@ function AppViewModel() {
         places.getDetails(request, gpLoaderCallback);
     }
 
+    /**
+    * @description this method is called once Google places.getDetails request is
+    * completed. The details returned are then displayed to loader-reviews
+    * @param {object} details - the results returned from Google Places
+    * @param {object} status - lets us know if the request to Google Places
+    *  request was successful or not
+    */
     function gpLoaderCallback(details, status) {
         if (status !== google.maps.places.PlacesServiceStatus.OK){
             setLoaderMsg('Something didn\'t work. Try again.', 'Error: '+ status);
@@ -506,9 +526,10 @@ function AppViewModel() {
             return;
         }
 
+        // Display the location details to the loader-info view
         var tmpInfo = [];
         tmpInfo.push({title: 'Name:', desc: details.name || '-'});
-        tmpInfo.push({title: 'Rating:', desc: details.rating || '-'});
+        tmpInfo.push({title: 'Avg Rating:', desc: details.rating || '-'});
         tmpInfo.push({title: 'Phone:', desc: details.formatted_phone_number || '-'});
         if (details.website){
             var website = '<a target="_blank" href="'+details.website+'">Click to open</a>';
@@ -520,41 +541,22 @@ function AppViewModel() {
         }
         t.loaderInfo(tmpInfo);
 
-        // var tmpReviews = [];
-        //
-        // if (!details.reviews){
-        //
-        //     tempReviews.push({
-        //         reviewer: 'No reviews',
-        //         stars: '',
-        //         date: ''
-        //     });
-        //
-        //     t.loaderReviews(tmpReviews);
-        //     return;
-        // }
-        //
-        // for (var i=0; i<details.reviews.length; i++){
-        //
-        // }
-        //
-        // t.loaderReviews(tmpReviews);
+        // Display the location reviews to the loader-reviews view
+        var tmpReviews = [];
+        if (!details.reviews){
 
-        /*
-        details.name
-        details.rating
-        details.formatted_phone_number
-        details.website
-        details.url  // GMaps address
-        details.formatted_address
+            tmpReviews.push({
+                author_name: 'No reviews',
+                rating: '',
+                text: ''
+            });
 
-        details.reviews.author_name
-        details.reviews.rating
-        details.reviews.text
-        details.reviews.date?
-        */
+            t.loaderReviews(tmpReviews);
+            toggleLoaderMsg(false);
+            return;
+        }
 
-
+        t.loaderReviews(details.reviews);
         toggleLoaderMsg(false);
     }
 
@@ -562,23 +564,133 @@ function AppViewModel() {
 
 
     /**
-    * @description
-    * @param {}
+    * @description loads reviews from YP.com (YellowPages). This is done in 2
+    * callbacks as shown below
     */
     function ypLoader() {
+        // clear any old results from the view
+        t.loaderInfo([]);
+        t.loaderReviews([]);
+
+        // display a loading message
         setLoaderMsg('Loading ...', '');
-        t.loaderLogo(YP_LOGO);
         toggleLoaderMsg(true);
+        t.loaderLogo(YP_LOGO);
 
-        setTimeout(function(){
-            ypLoaderCallback();
-        }, 500);
+        // var listing;
+        // var reviews;
+
+
+        // Request location details from YP.com
+        var timeout = setTimeout(timeoutError, 6000);
+        var loc = selectedEntry.geometry.location.lat() + ':' + selectedEntry.geometry.location.lng();
+        $.ajax({
+            url: 'http://api2.yp.com/listings/v1/search',
+            dataType: 'jsonp',
+            data: { key: 'qw1921yj10',
+                    term: selectedEntry.name,
+                    format: 'json',
+                    listingcount: '5',
+                    searchloc: loc},
+            success: ypLoaderCallback1
+        });
+
+
+        /*
+        * @description used to notify the user the YP.com request failed because
+        * jsonp does not support fail methods apparently
+        */
+        function timeoutError(){
+            setLoaderMsg('Something didn\'t work. Try again.', 'Error: request timed out');
+            toggleLoaderMsg(true);
+            return;
+        }
+
+        /*
+        * @description callback1 gets location details for the selected entry
+        * which includes a listingid that is required to lookup reviews for the
+        * YP.com listing
+        * @param {data} - the results from yp.com search api
+        */
+        function ypLoaderCallback1(data) {
+            clearTimeout(timeout);
+
+            if (data.searchResult.metaProperties.listingCount === 0) {
+                setLoaderMsg('No results', 'YP.com did not return any info for this location.');
+                toggleLoaderMsg(true);
+                return;
+            }
+
+            // TODO: the listing at index 0 is not always the same listing, check
+            // the name as well for a match
+            var listing = data.searchResult.searchListings.searchListing[0];
+
+            // Update the loader-info view
+            var tmpInfo = [];
+            tmpInfo.push({title: 'Name:', desc: listing.businessName || '-'});
+            tmpInfo.push({title: 'Avg Rating:', desc: listing.averageRating || '-'});
+            tmpInfo.push({title: 'Phone:', desc: listing.phone});
+            if (listing.websiteURL){
+                var website = '<a target="_blank" href="'+listing.websiteURL+'">Click to open</a>';
+                tmpInfo.push({title: 'Website:', desc: website});
+            }
+            var address = listing.street + ', ' +
+                       listing.city + ', ' +
+                       listing.state + ' ' + listing.zip;
+            tmpInfo.push({title: 'Address:', desc: address});
+
+            t.loaderInfo(tmpInfo);
+
+            timeout = setTimeout(timeoutError, 6000);
+
+            // Request the Review data from YP.com
+            $.ajax({
+                url: 'http://api2.yp.com/listings/v1/reviews',
+                dataType: 'jsonp',
+                data: { key: 'qw1921yj10',
+                        format: 'json',
+                        listingid: listing.listingId},
+                success: ypLoaderCallback2
+            });
+
+            toggleLoaderMsg(false);
+        }
+
+        /*
+        * @description this retrieves the reviews for the YP.com listing that
+        * was returned in callback1
+        * @param {object} data - the reviews results from YP.com
+        */
+        function ypLoaderCallback2(data) {
+            clearTimeout(timeout);
+
+            var tmpReviews = [];
+
+            if (data.ratingsAndReviewsResult.metaProperties.reviewCount === 0){
+                tmpReviews.push({
+                    author_name: 'No reviews',
+                    rating: '',
+                    text: ''
+                });
+                t.loaderReviews(tmpReviews);
+                return;
+            }
+
+            tmpReviews = data.ratingsAndReviewsResult.reviews.review;
+
+            // Add the properties to the reviews results that the view will look
+            // for to display to the user
+            var review;
+            for (var i=0; i<tmpReviews.length; i++){
+                review = tmpReviews[i];
+                review.author_name = review.reviewer;
+                review.text = review.reviewSubject + ': ' + review.reviewBody;
+            }
+            t.loaderReviews(tmpReviews);
+        }
     }
 
-    function ypLoaderCallback() {
 
-        toggleLoaderMsg(false);
-    }
 
 
 
