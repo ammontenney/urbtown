@@ -129,11 +129,14 @@
                         <div class="loader-logo">
                             <img class="img-responsive" data-bind="attr: {src: loaderLogo}">
                         </div>
-                        <div class="loader-info" data-bind="foreach: loaderInfo">
-                                <div class="loader-row">
+                        <div class="loader-info">
+                                <div class="text-center col-sm-12"><h2 data-bind="text: entryName"></h2></div>
+                                <!-- ko foreach: loaderInfo -->
+                                <div class="loader-row row">
                                     <div class="col-sm-4"><strong data-bind="text: title"></strong></div>
                                     <div class="col-sm-8" data-bind="html: desc"></div>
                                 </div>
+                                <!-- /ko -->
                         </div>
                         <div class="loader-reviews" data-bind="foreach: loaderReviews">
                             <div class="review">

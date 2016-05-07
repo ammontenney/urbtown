@@ -52,6 +52,7 @@ function AppViewModel() {
     t.loaderLogo = ko.observable();
     t.loaderInfo = ko.observableArray();
     t.loaderReviews = ko.observableArray();
+    t.entryName = ko.observable();
 
     t.styleShowLoaderContent = ko.pureComputed(styleShowLoaderContent);
     t.styleShowLoaderMsg = ko.pureComputed(styleShowLoaderMsg);
@@ -526,9 +527,11 @@ function AppViewModel() {
             return;
         }
 
+        t.entryName(details.name);
+
         // Display the location details to the loader-info view
         var tmpInfo = [];
-        tmpInfo.push({title: 'Name:', desc: details.name || '-'});
+        // tmpInfo.push({title: 'Name:', desc: details.name || '-'});
         tmpInfo.push({title: 'Avg Rating:', desc: details.rating || '-'});
         tmpInfo.push({title: 'Phone:', desc: details.formatted_phone_number || '-'});
         if (details.website){
@@ -625,9 +628,11 @@ function AppViewModel() {
             // the name as well for a match
             var listing = data.searchResult.searchListings.searchListing[0];
 
+            t.entryName(listing.businessName);
+
             // Update the loader-info view
             var tmpInfo = [];
-            tmpInfo.push({title: 'Name:', desc: listing.businessName || '-'});
+            // tmpInfo.push({title: 'Name:', desc: listing.businessName || '-'});
             tmpInfo.push({title: 'Avg Rating:', desc: listing.averageRating || '-'});
             tmpInfo.push({title: 'Phone:', desc: listing.phone});
             if (listing.websiteURL){
