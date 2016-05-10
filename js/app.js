@@ -335,6 +335,7 @@ function AppViewModel() {
     */
     function openWelcome() {
         // TODO: replace w/ observables
+        t.filterLabel(NO_FILTER_MSG);
         $welcomeClose.css('display', 'block');
         $welcomeView.css('visibility', 'visible');
     }
