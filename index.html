@@ -122,33 +122,35 @@
                 </div>
                 <div class="loader">
                     <div class="loader-msg" data-bind="style: {visibility: styleShowLoaderMsg}">
-                        <h2><span class="label label-primary" data-bind="text: loaderMsgTitle"></span></h2>
-                        <p data-bind="text: loaderMsgDesc"></p>
+                        <div>
+                            <h2><span class="label label-primary" data-bind="text: loaderMsgTitle"></span></h2>
+                            <p data-bind="text: loaderMsgDesc"></p>
+                        </div>
                     </div>
                     <div class="loader-content" data-bind="style: {visibility: styleShowLoaderContent}">
                         <div class="loader-logo">
                             <img class="img-responsive" data-bind="attr: {src: loaderLogo}">
                         </div>
-                        <div class="loader-info">
-                                <div class="text-center col-sm-12"><h2 data-bind="text: entryName"></h2></div>
-                                <!-- ko foreach: loaderInfo -->
-                                <div class="loader-row row">
-                                    <div class="col-sm-4"><strong data-bind="text: title"></strong></div>
-                                    <div class="col-sm-8" data-bind="html: desc"></div>
+                        <div class="loader-details">
+                            <div class="list-group">
+                                    <div class="text-center active list-group-item"><strong data-bind="text: entryName"></strong></div>
+                                    <!-- ko foreach: loaderInfo -->
+                                    <div class="list-group-item">
+                                        <strong data-bind="text: title"></strong>
+                                        <span data-bind="html: desc"></span>
+                                    </div>
+                                    <!-- /ko -->
+                            </div>
+                            <div class="list-group">
+                                <div class="text-center list-group-item active"><strong>Reviews</strong></div>
+                                <!-- ko foreach: loaderReviews -->
+                                <div class="list-group-item">
+                                    <strong data-bind="text: author_name"></strong>
+                                    <strong data-bind="text: ' - ' + rating"></strong>
+                                    <p data-bind="text: text"></p>
                                 </div>
                                 <!-- /ko -->
-                        </div>
-                        <div class="loader-reviews" data-bind="foreach: loaderReviews">
-                            <div class="review">
-                                <div><strong>
-                                    <span data-bind="text: author_name"></span>
-                                    <span data-bind="text: ' - ' + rating"></span>
-                                </strong></div>
-                                <p data-bind="text: text"></p>
                             </div>
-                        </div>
-                        <div class="loader-col gp-reviews" data-bind="if: !loaderReviews">
-                            No reviews for this location.
                         </div>
                     </div>
                 </div>
