@@ -146,6 +146,8 @@ function AppViewModel() {
                 return;
             }
 
+            toggleMarkers(false); // remove any existing markers from the map
+            
             originalResults = placesResults;
             t.results(placesResults);
 
