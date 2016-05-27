@@ -147,7 +147,7 @@ function AppViewModel() {
             }
 
             toggleMarkers(false); // remove any existing markers from the map
-            
+
             originalResults = placesResults;
             t.results(placesResults);
 
@@ -728,6 +728,32 @@ function AppViewModel() {
     initializeGMaps();
 }
 
-// TODO: change global to var
-myViewModel = new AppViewModel();
-ko.applyBindings(myViewModel);
+/**
+* @description Used to make sure all dependencies have been loaded
+* @return {boolean} true = all dependencies satisfied; false = missing dependencies
+*/
+function checkDependencies() {
+    if (typeof google === 'undefined' ||
+        typeof ko === 'undefined' ||
+        typeof jQuery === 'undefined')
+        return false;
+
+    return true;
+}
+
+/**
+*   @description This function runs on the initial program load. It binds the
+*   ViewModel with KnockOut so all of the code above will work as intended.
+*   It basically kicks off the app.
+*/
+function startApp() {
+    if ( !checkDependencies() ) {
+        setTimeout(startApp, 100); // come back in 100ms to see if dependencies have been loaded
+        return;
+    }
+
+    var myViewModel = new AppViewModel();
+    ko.applyBindings(myViewModel);
+}
+
+startApp();
